@@ -1,4 +1,3 @@
-import messaging from '@react-native-firebase/messaging';
 import { Platform } from 'react-native';
 import RNCallKeep, { IOptions } from 'react-native-callkeep';
 import {
@@ -51,11 +50,9 @@ class RNTwilioPhone {
       options
     );
 
-    const unsubscribeRegisterAndroid = RNTwilioPhone.registerAndroid();
 
     return () => {
       unsubscribeCallKeep();
-      unsubscribeRegisterAndroid();
     };
   }
 
@@ -89,27 +86,6 @@ class RNTwilioPhone {
     };
   }
 
-  static handleBackgroundState() {
-    if (Platform.OS !== 'android') {
-      return;
-    }
-
-    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-      if (!remoteMessage.data) {
-        return;
-      }
-
-      RNCallKeep.registerPhoneAccount();
-      RNCallKeep.registerAndroidEvents();
-      RNCallKeep.setAvailable(true);
-
-      RNTwilioPhone.listenTwilioPhone();
-      RNTwilioPhone.listenCallKeep();
-
-      TwilioPhone.handleMessage(remoteMessage.data);
-    });
-  }
-
   static startCall(to: string, calleeName?: string, from?: string) {
     const accessToken = RNTwilioPhone.accessToken;
     const params: ConnectParams = { to };
@@ -133,33 +109,6 @@ class RNTwilioPhone {
 
     const accessToken = RNTwilioPhone.accessToken;
     TwilioPhone.unregister(accessToken, RNTwilioPhone.deviceToken);
-  }
-
-  private static registerAndroid() {
-    if (Platform.OS !== 'android') {
-      return () => {};
-    }
-
-    messaging()
-      .getToken()
-      .then(RNTwilioPhone.registerTwilioPhone)
-      .catch((e) => console.log(e));
-
-    // Listen to whether the token changes
-    const unsubscribeTokenRefresh = messaging().onTokenRefresh(
-      RNTwilioPhone.registerTwilioPhone
-    );
-
-    const unsubscribeMessage = messaging().onMessage((remoteMessage) => {
-      if (remoteMessage.data) {
-        TwilioPhone.handleMessage(remoteMessage.data);
-      }
-    });
-
-    return () => {
-      unsubscribeTokenRefresh();
-      unsubscribeMessage();
-    };
   }
 
   private static listenTwilioPhone() {
@@ -351,17 +300,6 @@ class RNTwilioPhone {
     RNCallKeep.removeEventListener('didPerformSetMutedCallAction');
     RNCallKeep.removeEventListener('didToggleHoldCallAction');
     RNCallKeep.removeEventListener('didPerformDTMFAction');
-  }
-
-  private static registerTwilioPhone(deviceToken: string) {
-    try {
-      const accessToken = RNTwilioPhone.accessToken;
-
-      TwilioPhone.register(accessToken, deviceToken);
-      RNTwilioPhone.deviceToken = deviceToken;
-    } catch (e) {
-      console.log(e);
-    }
   }
 
   private static addCall(call: Call) {
