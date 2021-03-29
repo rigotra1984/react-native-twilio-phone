@@ -7,7 +7,6 @@ import {
   TwilioPhone,
   twilioPhoneEmitter,
 } from 'react-native-twilio-phone';
-import VoipPushNotification from 'react-native-voip-push-notification';
 import ramdomUuid from 'uuid-random';
 
 export type RNTwilioPhoneOptions = {
@@ -37,39 +36,37 @@ const CK_CONSTANTS = {
 class RNTwilioPhone {
   static calls: Call[] = [];
 
-  private static fetchAccessToken: () => Promise<string>;
   private static deviceToken: string | null = null;
   private static activeCall: Call | null = null;
+  private static accessToken: string;
 
   static initialize(
     callKeepOptions: IOptions,
-    fetchAccessToken: () => Promise<string>,
+    accessToken: string,
     options = defaultOptions
   ) {
     const unsubscribeCallKeep = RNTwilioPhone.initializeCallKeep(
       callKeepOptions,
-      fetchAccessToken,
+      accessToken,
       options
     );
 
     const unsubscribeRegisterAndroid = RNTwilioPhone.registerAndroid();
-    const unsubscribeRegisterIOS = RNTwilioPhone.registerIOS();
 
     return () => {
       unsubscribeCallKeep();
       unsubscribeRegisterAndroid();
-      unsubscribeRegisterIOS();
     };
   }
 
   static initializeCallKeep(
     callKeepOptions: IOptions,
-    fetchAccessToken: () => Promise<string>,
+    accessToken: string,
     options = defaultOptions
   ) {
     const { requestPermissionsOnInit } = options;
 
-    RNTwilioPhone.fetchAccessToken = fetchAccessToken;
+    RNTwilioPhone.accessToken = accessToken;
 
     if (Platform.OS === 'ios' || requestPermissionsOnInit) {
       RNCallKeep.setup(callKeepOptions)
@@ -113,8 +110,8 @@ class RNTwilioPhone {
     });
   }
 
-  static async startCall(to: string, calleeName?: string, from?: string) {
-    const accessToken = await RNTwilioPhone.fetchAccessToken();
+  static startCall(to: string, calleeName?: string, from?: string) {
+    const accessToken = RNTwilioPhone.accessToken;
     const params: ConnectParams = { to };
 
     if (from) {
@@ -129,12 +126,12 @@ class RNTwilioPhone {
     RNCallKeep.startCall(uuid, to, calleeName, 'generic');
   }
 
-  static async unregister() {
+  static unregister() {
     if (!RNTwilioPhone.deviceToken) {
       return;
     }
 
-    const accessToken = await RNTwilioPhone.fetchAccessToken();
+    const accessToken = RNTwilioPhone.accessToken;
     TwilioPhone.unregister(accessToken, RNTwilioPhone.deviceToken);
   }
 
@@ -162,32 +159,6 @@ class RNTwilioPhone {
     return () => {
       unsubscribeTokenRefresh();
       unsubscribeMessage();
-    };
-  }
-
-  private static registerIOS() {
-    if (Platform.OS !== 'ios') {
-      return () => {};
-    }
-
-    VoipPushNotification.addEventListener(
-      'register',
-      RNTwilioPhone.registerTwilioPhone
-    );
-
-    VoipPushNotification.addEventListener(
-      'notification',
-      (notification: any) => {
-        delete notification.aps;
-        TwilioPhone.handleMessage(notification);
-      }
-    );
-
-    VoipPushNotification.registerVoipToken();
-
-    return () => {
-      VoipPushNotification.removeEventListener('register');
-      VoipPushNotification.removeEventListener('notification');
     };
   }
 
@@ -382,9 +353,9 @@ class RNTwilioPhone {
     RNCallKeep.removeEventListener('didPerformDTMFAction');
   }
 
-  private static async registerTwilioPhone(deviceToken: string) {
+  private static registerTwilioPhone(deviceToken: string) {
     try {
-      const accessToken = await RNTwilioPhone.fetchAccessToken();
+      const accessToken = RNTwilioPhone.accessToken;
 
       TwilioPhone.register(accessToken, deviceToken);
       RNTwilioPhone.deviceToken = deviceToken;
