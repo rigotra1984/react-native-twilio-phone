@@ -3,8 +3,6 @@
 
 @interface RCT_EXTERN_MODULE(TwilioPhone, NSObject)
 
-RCT_EXTERN_METHOD(register:(NSString *)accessToken withDeviceToken:(NSString *)deviceToken)
-
 RCT_EXTERN_METHOD(handleMessage:(NSDictionary *)payload)
 
 RCT_EXTERN_METHOD(acceptCallInvite:(NSString *)callSid)
@@ -24,8 +22,6 @@ RCT_EXTERN_METHOD(toggleSpeaker:(BOOL *)speakerOn)
 RCT_EXTERN_METHOD(sendDigits:(NSString *)callSid withDigits:(NSString *)digits)
 
 RCT_EXTERN_METHOD(startCall:(NSString *)accessToken withParams:(NSDictionary *)params)
-
-RCT_EXTERN_METHOD(unregister:(NSString *)accessToken withDeviceToken:(NSString *)deviceToken)
 
 RCT_EXTERN_METHOD(activateAudio)
 

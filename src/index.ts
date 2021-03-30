@@ -19,7 +19,6 @@ export type ConnectParams = Record<string, string>;
 export type Permissions = Record<PermissionName, PermissionStatus>;
 
 type TwilioPhoneType = {
-  register(accessToken: string, deviceToken: string): void;
   handleMessage(payload: MessagePayload): void;
   acceptCallInvite(callSid: string): void;
   rejectCallInvite(callSid: string): void;
@@ -30,7 +29,6 @@ type TwilioPhoneType = {
   toggleSpeaker(speakerOn: boolean): void;
   sendDigits(callSid: string, digits: string): void;
   startCall(accessToken: string, params: ConnectParams): void;
-  unregister(accessToken: string, deviceToken: string): void;
   activateAudio(): void; // iOS only
   deactivateAudio(): void; // iOS only
   checkPermissions(callback: (permissions: Permissions) => void): void;
@@ -52,8 +50,4 @@ export enum EventType {
   CallReconnected = 'CallReconnected',
   CallDisconnected = 'CallDisconnected',
   CallDisconnectedError = 'CallDisconnectedError',
-  RegistrationSuccess = 'RegistrationSuccess',
-  RegistrationFailure = 'RegistrationFailure',
-  UnregistrationSuccess = 'UnregistrationSuccess',
-  UnregistrationFailure = 'UnregistrationFailure',
 }

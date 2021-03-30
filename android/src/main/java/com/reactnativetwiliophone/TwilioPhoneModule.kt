@@ -28,29 +28,6 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
   }
 
   @ReactMethod
-  fun register(accessToken: String, deviceToken: String) {
-    Log.i(tag, "Registering")
-
-    Voice.register(accessToken, Voice.RegistrationChannel.FCM, deviceToken, object : RegistrationListener {
-      override fun onRegistered(accessToken: String, fcmToken: String) {
-        Log.d(tag, "Successfully registered FCM token")
-
-        sendEvent(reactApplicationContext, "RegistrationSuccess", null)
-      }
-
-      override fun onError(error: RegistrationException, accessToken: String, fcmToken: String) {
-        Log.e(tag, "Registration error: ${error.errorCode}, ${error.message}")
-
-        val params = Arguments.createMap()
-        params.putInt("errorCode", error.errorCode)
-        params.putString("errorMessage", error.message)
-
-        sendEvent(reactApplicationContext, "RegistrationFailure", params)
-      }
-    })
-  }
-
-  @ReactMethod
   fun handleMessage(payload: ReadableMap) {
     Log.i(tag, "Handling message")
 
@@ -199,29 +176,6 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
       .build()
 
     Voice.connect(reactApplicationContext, connectOptions, callListener)
-  }
-
-  @ReactMethod
-  fun unregister(accessToken: String, deviceToken: String) {
-    Log.i(tag, "Unregistering")
-
-    Voice.unregister(accessToken, Voice.RegistrationChannel.FCM, deviceToken, object : UnregistrationListener {
-      override fun onUnregistered(accessToken: String, fcmToken: String) {
-        Log.d(tag, "Successfully unregistered FCM token")
-
-        sendEvent(reactApplicationContext, "UnregistrationSuccess", null)
-      }
-
-      override fun onError(error: RegistrationException, accessToken: String, fcmToken: String) {
-        Log.e(tag, "Unregistration error: ${error.errorCode}, ${error.message}")
-
-        val params = Arguments.createMap()
-        params.putInt("errorCode", error.errorCode)
-        params.putString("errorMessage", error.message)
-
-        sendEvent(reactApplicationContext, "UnregistrationFailure", params)
-      }
-    })
   }
 
   @ReactMethod

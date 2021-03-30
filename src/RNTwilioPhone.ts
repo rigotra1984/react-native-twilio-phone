@@ -35,7 +35,6 @@ const CK_CONSTANTS = {
 class RNTwilioPhone {
   static calls: Call[] = [];
 
-  private static deviceToken: string | null = null;
   private static activeCall: Call | null = null;
   private static accessToken: string;
 
@@ -100,15 +99,6 @@ class RNTwilioPhone {
     RNTwilioPhone.activeCall = { uuid: null, sid: null };
 
     RNCallKeep.startCall(uuid, to, calleeName, 'generic');
-  }
-
-  static unregister() {
-    if (!RNTwilioPhone.deviceToken) {
-      return;
-    }
-
-    const accessToken = RNTwilioPhone.accessToken;
-    TwilioPhone.unregister(accessToken, RNTwilioPhone.deviceToken);
   }
 
   private static listenTwilioPhone() {
