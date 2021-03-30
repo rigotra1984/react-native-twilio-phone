@@ -14,11 +14,6 @@ import {
   twilioPhoneEmitter,
 } from 'react-native-twilio-phone';
 
-const identity = Platform.select({
-  ios: 'Steve',
-  android: 'Larry',
-});
-
 const from = Platform.select({
   ios: 'client:Steve',
   android: 'client:Larry',
