@@ -44,24 +44,12 @@ const callKeepOptions = {
   },
 };
 
-async function fetchAccessToken() {
-  const response = await fetch(
-    'https://XXXXXX.ngrok.io/accessToken?identity=' +
-      identity +
-      '&os=' +
-      Platform.OS
-  );
-  const accessToken = await response.text();
-
-  return accessToken;
-}
-
 export function App() {
   const [to, setTo] = React.useState('');
   const [callInProgress, setCallInProgress] = React.useState(false);
 
   React.useEffect(() => {
-    return RNTwilioPhone.initialize(callKeepOptions, fetchAccessToken);
+    return RNTwilioPhone.initialize(callKeepOptions, '');
   }, []);
 
   React.useEffect(() => {
@@ -107,14 +95,6 @@ export function App() {
     }
   }
 
-  async function unregister() {
-    try {
-      await RNTwilioPhone.unregister();
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   let content;
 
   if (callInProgress) {
@@ -135,9 +115,6 @@ export function App() {
           placeholderTextColor="gray"
         />
         <Button title="Start call" onPress={call} />
-        <View style={styles.unregister}>
-          <Button title="Unregister" onPress={unregister} />
-        </View>
       </View>
     );
   }
