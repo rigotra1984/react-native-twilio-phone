@@ -87,7 +87,7 @@ class RNTwilioPhone {
 
   static startCall(to: string, calleeName?: string, from?: string) {
     const accessToken = RNTwilioPhone.accessToken;
-    const params: ConnectParams = { to };
+    const params: ConnectParams = { To: to };
 
     if (from) {
       params.from = from;
