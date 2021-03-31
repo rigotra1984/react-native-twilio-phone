@@ -1,6 +1,6 @@
 {
   "name": "islacel-react-native-twilio-phone",
-  "version": "1.5.3",
+  "version": "1.5.0",
   "description": "Twilio Voice React Native module.",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
