@@ -12,7 +12,7 @@ import {
   EventType,
   RNTwilioPhone,
   twilioPhoneEmitter,
-} from 'react-native-twilio-phone';
+} from '@islacel/react-native-twilio-phone';
 
 const from = Platform.select({
   ios: 'client:Steve',
