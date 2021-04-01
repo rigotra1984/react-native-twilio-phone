@@ -5,7 +5,7 @@ import {
   EventType,
   TwilioPhone,
   twilioPhoneEmitter,
-} from 'islacel-react-native-twilio-phone';
+} from 'react-native-twilio-phone';
 import ramdomUuid from 'uuid-random';
 
 export type RNTwilioPhoneOptions = {
