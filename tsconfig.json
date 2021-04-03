@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react-native-twilio-phone": ["./src/index"]
+      "islacel-react-native-twilio-phone": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
